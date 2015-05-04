@@ -1,0 +1,12 @@
+<AlgorithmInfo xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/DataTypes_Lib">
+  <Author>Simon Ruffieux</Author>
+  <Description>This algorithm is an example of MATLAB implementation to recognize segmented gestures. It does not implement any real recognition algorithm but provides an example/skeleton for developers. The returned labels are generated purely randomly</Description>
+  <Name>DummyAlgo Matlab</Name>
+  <ProgrammationLanguage>Matlab</ProgrammationLanguage>
+  <RunFile>Test.m</RunFile>
+  <SupportedDataTypes>
+    <DataType>xsens</DataType>
+  </SupportedDataTypes>
+  <SupportedSequenceType>Segmented</SupportedSequenceType>
+  <Visibility>Public</Visibility>
+</AlgorithmInfo>
