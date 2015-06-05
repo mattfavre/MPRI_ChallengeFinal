@@ -8,23 +8,36 @@ clearvars;
 clc;
 
 % --- /!\ CONSTANT /!\ --- 
-PATH_TRAINSET_FILE      = 'C:\LocalPathToDataset\Dataset_segmented.mat'; %the path to the dataset
-PATH_TESTSET_FILE      = 'C:\LocalPathToDataset\Dataset_segmented.mat'; %for testing purposes only (Normally you should split your Trainset (cross-validation, etc))
+PATH_TRAINSET_FILE      = './DataSet/Dataset_segmented.mat'; %the path to the dataset
+PATH_TESTSET_FILE      = './DataSet/Dataset_segmented.mat'; %for testing purposes only (Normally you should split your Trainset (cross-validation, etc))
 
 % --- /!\ OPTIONS /!\ --- 
 % Choose according to what you want to do
 LOAD_DATASET       = 1; % 0: No, 1: Yes
-TRAIN           = 1; % 0: No, 1: Yes
-RECOGNIZE       = 1; % 0: No, 1: Yes
+TRAIN           = 0; % 0: No, 1: Yes
+RECOGNIZE       = 0; % 0: No, 1: Yes
 
 PARAMETERS = [];
 
-%Features to be extracted from the xsens sensor
-FeaturesToExtract = [1:9 18:29]; %Select which features to extract
+%Features to be extracted from the xsens sensor. 
+% We are going to use Hand : 
+%			Yaw, roll, pitch, 
+%		      
+%                     WristLeft:
+%			QuatX,QuatY,QuatZ			
+%		      
+%		      Elbow :
+%			QuatX,QuatY,QuatZ
+%
+% 
+% We are going to use ElbowLeft WristLeft ElbowRight WristRight HandRight
+
+%FeaturesToExtractXSens = [17*3+7:17*3+9 17*2+14:17*2+16 17*1+14:17*1+16]; %Select which features to extract
+FeaturesToExtractXSens = [17*3+7:17*3+9 17*3+14:17*3+16]; %Select which features to extract
 
 % --- LOAD TRAIN SET ORDERED BY CLASSES --------------------------%
 if LOAD_DATASET == 1
-    classSet = LoadTrainSet(PATH_TRAINSET_FILE,FeaturesToExtract);
+    classSet = LoadTrainSet(PATH_TRAINSET_FILE,FeaturesToExtractXSens);
     disp('--- Number of occurence per class in the loaded training set: ---');
     classSet.occurenceCount
 end
@@ -42,10 +55,19 @@ if RECOGNIZE == 1
     load('myModel.mat', 'model');
     disp('--- Loaded the model ! (File: myModel.mat) ---');
     % --- Load Evaluation set --------------------------%
-    evalSet = LoadTestSet(PATH_TESTSET_FILE,FeaturesToExtract);
+    evalSet = LoadTestSet(PATH_TESTSET_FILE,FeaturesToExtractXSens);
     % --- Start recognition --------------------------%
     predicted = Recognize(model, evalSet);
+    
+    figure;
+    hist(predicted);
+    title('Histogramme of gesture');
+    xlabel('Gesture number');
+    ylabel('Apparitions');
     predicted = int32(predicted)-1;
+    
+    
+   
     % --- Output results in file --------------------------%
     filename = 'results.txt';
     fid = fopen(filename, 'w');
